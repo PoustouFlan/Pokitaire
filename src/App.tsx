@@ -1,9 +1,10 @@
 import './App.css';
 import { useState } from "react";
 import { createDeck, dealCards, shuffled } from "./utils/deckUtils";
-import { Card, Rank, Suit } from "./components/Card";
+import { Card, CardComponent, Rank, Suit } from "./components/Card";
 import { Board, BoardComponent } from "./components/Board";
 import { compareEval, evaluatePokerHand, extractBestHand } from "./utils/pokerUtils";
+import {DeckContentComponent} from './components/DeckContent';
 
 function App() {
     const values: Rank[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -18,6 +19,7 @@ function App() {
         tableHand: { cards: [] },
     });
     const [revealing, setRevealing] = useState(false);
+    const [showDeckPopup, setShowDeckPopup] = useState(false); // New state for pop-up visibility
 
     function onPlayerDiscard(index: number) {
         if (board.playerDeck.cards.length === 0) return;
@@ -53,18 +55,13 @@ function App() {
         const tableHand = board.tableHand;
         const playedCards = extractBestHand(tableHand);
 
-
         setRevealing(true);
         let revealedCount = 0;
-        // Gradually reveal cards of the table hand
         const revealInterval = setInterval(() => {
             let oneRevealed = false;
-            for (let i = 0; i < tableHand.cards.length; i++)
-            {
-                if (!tableHand.cards[i].hidden)
-                    continue;
-                if (playedCards.includes(tableHand.cards[i]))
-                {
+            for (let i = 0; i < tableHand.cards.length; i++) {
+                if (!tableHand.cards[i].hidden) continue;
+                if (playedCards.includes(tableHand.cards[i])) {
                     if (revealedCount === 4) {
                         clearInterval(revealInterval);
                         setTimeout(() => {
@@ -81,7 +78,7 @@ function App() {
                     break;
                 }
             }
-            setBoard({...board});
+            setBoard({ ...board });
             if (!oneRevealed) {
                 clearInterval(revealInterval);
                 setRevealing(false);
@@ -90,7 +87,6 @@ function App() {
         setGamePhase('revealing');
     }
 
-    // Handle the play phase where hands are compared
     function playRound() {
         const playerHand = board.playerHand;
         const playerEval = evaluatePokerHand(playerHand.cards);
@@ -101,24 +97,20 @@ function App() {
 
         let newBoard;
         if (result === 1) {
-            // Player wins, add table hand to player deck
             newBoard = {
                 ...board,
                 playerDeck: { cards: [...board.playerDeck.cards, ...board.tableHand.cards, ...playerHand.cards] },
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
-        } else if (result === 0) // tie
-        {
+        } else if (result === 0) {
             newBoard = {
                 playerDeck: { cards: [...board.playerDeck.cards, ...board.tableHand.cards] },
                 tableDeck: { cards: [...board.tableDeck.cards, ...playerHand.cards] },
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
-        }
-        else {
-            // Table wins, add player hand to table deck
+        } else {
             newBoard = {
                 ...board,
                 tableDeck: { cards: [...board.tableDeck.cards, ...board.tableHand.cards, ...playerHand.cards] },
@@ -128,14 +120,16 @@ function App() {
         }
         setBoard(newBoard);
         setGamePhase('play');
-        if (board.playerDeck.cards.length === 0)
-            setGamePhase('lose');
-        if (board.tableDeck.cards.length === 0)
-            setGamePhase('win');
+        if (board.playerDeck.cards.length === 0) setGamePhase('lose');
+        if (board.tableDeck.cards.length === 0) setGamePhase('win');
     }
 
     function handleReplay() {
         window.location.reload();
+    }
+
+    function toggleDeckPopup() {
+        setShowDeckPopup(prev => !prev); // Toggle the visibility of the deck pop-up
     }
 
     return (
@@ -161,6 +155,9 @@ function App() {
                         tableHand={board.tableHand}
                         onPlayerDiscard={(gamePhase === 'discard' && board.playerDeck.cards.length > 0) ? onPlayerDiscard : null}
                     />
+                    <div className="deck-info" onClick={toggleDeckPopup}>
+                        <button>Show Deck</button>
+                    </div>
                     {gamePhase === 'discard' && (
                         <button onClick={revealRound}>Reveal</button>
                     )}
@@ -171,6 +168,11 @@ function App() {
                         <button onClick={startRound}>New Round</button>
                     )}
                 </>
+            )}
+
+            {/* Deck Pop-up */}
+            {showDeckPopup && (
+                <DeckContentComponent cards={board.playerDeck.cards} onClose={toggleDeckPopup}/>
             )}
         </>
     );
