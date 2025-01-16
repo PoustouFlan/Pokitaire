@@ -69,7 +69,7 @@ export const evaluatePokerHand = (cards: Card[]): number[] => {
         return [4, ranks[1]];
     if (histogram.length > 0 && histogram[0][1] === 3)
         return [3, ...histogram.map(([rank, _]) => rank)];
-    if (histogram.length > 0 && histogram[0][1] === 2 && histogram[1][1] === 2)
+    if (histogram.length > 1 && histogram[0][1] === 2 && histogram[1][1] === 2)
         return [2, ...histogram.map(([rank, _]) => rank)];
     if (histogram.length > 0 && histogram[0][1] === 2)
         return [1, ...histogram.map(([rank, _]) => rank)];
