@@ -27,6 +27,7 @@ body {
   overflow: hidden;
 }
 
+
 h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
@@ -59,12 +60,23 @@ button:hover {
   background-color: #e64a19;
 }
 
+
 .game-board {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  position: relative;
+  width: 1000px;
+  height: 500px;
 }
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
 
 /* Card Styles */
 .card {
@@ -109,19 +121,29 @@ button:hover {
 }
 
 /* Deck Styles */
-.deck {
+.decks {
+  position: absolute;
+  right: 1rem;
+  top: 140px;
+  transform: translateY(-50%);
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.deck {
+  width: 150px;
+  height: 200px;
+  color: black;
+  display: flex;
   justify-content: center;
-  padding: 1rem;
+  align-items: center;
   background-color: #0b3d91;
   border: 2px solid #fff;
   border-radius: 10px;
-  width: 900px;
-  height: 450px;
-  overflow: hidden;
   position: relative;
+  box-sizing: border-box;
 }
 
 .deck::after {
@@ -131,7 +153,7 @@ button:hover {
   left: 50%;
   transform: translate(-50%, -50%);
   color: rgba(255, 255, 255, 0.5);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   pointer-events: none;
 }
 
@@ -140,7 +162,17 @@ button:hover {
   display: flex;
   gap: 10px;
   justify-content: center;
-  margin-top: 1rem;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.hand-type {
+  width: 100%;
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffcc00; /* Highlight color for hand type */
 }
 
 .card-container {

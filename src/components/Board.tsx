@@ -14,10 +14,7 @@ export type BoardProps = {
     tableDeck: Deck;
     playerHand: Hand;
     tableHand: Hand;
-    onPlayerDiscard: (index: number) => void;
-    startRound: () => void;
-    gamePhase: 'discard' | 'play';
-    playRound: () => void;
+    onPlayerDiscard: ((index: number) => void) | null;
 }
 
 export const BoardComponent: React.FC<BoardProps> = ({
@@ -26,22 +23,19 @@ export const BoardComponent: React.FC<BoardProps> = ({
     playerHand,
     tableHand,
     onPlayerDiscard,
-    startRound,
-    gamePhase,
-    playRound
 }) => {
     return (
         <div className="game-board">
-            <HandComponent hand={tableHand} hidden={gamePhase === 'play' ? 0 : 7} />
-            <DeckComponent {...tableDeck} />
-            <HandComponent hand={playerHand} onDiscard={onPlayerDiscard} hidden={0}/>
-            {gamePhase === 'discard' && (
-                <button onClick={playRound}>Play</button>
-            )}
-            {gamePhase === 'play' && (
-                <button onClick={startRound}>New Round</button>
-            )}
-            <DeckComponent {...playerDeck} />
+            <div className="side table">
+                <HandComponent hand={tableHand} />
+            </div>
+            <div className="side player">
+                <HandComponent hand={playerHand} onDiscard={onPlayerDiscard} />
+            </div>
+            <div className="decks">
+                <DeckComponent {...tableDeck} />
+                <DeckComponent {...playerDeck} />
+            </div>
         </div>
     );
 };

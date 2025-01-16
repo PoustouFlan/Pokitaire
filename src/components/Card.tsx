@@ -6,10 +6,6 @@ export type Rank = 'A' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 
 export type Card = {
     suit: Suit;
     value: Rank;
-};
-
-type CardProp = {
-    card: Card;
     hidden: boolean;
 };
 
@@ -36,9 +32,9 @@ const rankToPosition: Record<Rank, { x: number; y: number }> = {
     K: { x: 2, y: 2 },
 };
 
-export const CardComponent: React.FC<CardProp> = ({card, hidden}) => {
-    const sprite = hidden ? '/assets/Cards/Card_Back-88x124.png' : suitToSprite[card.suit];
-    const position = hidden ? { x: 0, y: 0} : rankToPosition[card.value];
+export const CardComponent: React.FC<Card> = ({suit, value, hidden}) => {
+    const sprite = hidden ? '/assets/Cards/Card_Back-88x124.png' : suitToSprite[suit];
+    const position = hidden ? { x: 0, y: 0} : rankToPosition[value];
 
     return (
         <div
@@ -50,8 +46,7 @@ export const CardComponent: React.FC<CardProp> = ({card, hidden}) => {
                 height: '124px',
             }}
         >
-            {/* Optionally add overlay text for accessibility */}
-            <span className="sr-only">{`${card.value} of ${card.suit}`}</span>
+            <span className="sr-only">{`${value} of ${suit}`}</span>
         </div>
     );
 };
