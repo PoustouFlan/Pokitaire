@@ -61,7 +61,16 @@ function App() {
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
-        } else {
+        } else if (result === 0) // tie
+        {
+            newBoard = {
+                playerDeck: { cards: [...board.playerDeck.cards, ...tableHand.cards] },
+                tableDeck: { cards: [...board.tableDeck.cards, ...playerHand.cards] },
+                playerHand: { cards: [] },
+                tableHand: { cards: [] },
+            };
+        }
+        else {
             // Table wins, add player hand to table deck
             newBoard = {
                 ...board,

@@ -1,12 +1,110 @@
+import { Rank } from '../components/Card';
 import { Hand } from '../components/Hand';
 
-export const evaluatePokerHand = (hand: Hand): number => {
-    // TODO
-    return Math.random();
+function rankToIndex(rank: Rank): number {
+    const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    return ranks.indexOf(rank);
+}
+
+function getRankHistogram(ranks: number[]): [number, number][] {
+    const histogram: { [key: number]: number } = {};
+
+    // Count the occurrences of each rank
+    for (const rank of ranks) {
+        histogram[rank] = (histogram[rank] || 0) + 1;
+    }
+
+    // Convert the histogram to an array of [count, rank] pairs
+    const sortedHistogram = Object.entries(histogram)
+        .map(([rank, count]) => [parseInt(rank), count] as [number, number])
+        .sort((a, b) => b[1] - a[1] || b[0] - a[0]); // Sort by count (desc) and then by rank (desc)
+
+    return sortedHistogram;
+}
+
+export const evaluatePokerHand = (hand: Hand): number[] => {
+    // 8 - Straight Flush
+    // 7 - Four of a Kind
+    // 6 - Full House
+    // 5 - Flush
+    // 4 - Straight
+    // 3 - Three of a Kind
+    // 2 - Two Pairs
+    // 1 - Pair
+    // 0 - High Card
+    const ranks = hand.cards.map(card => rankToIndex(card.value)).sort((a, b) => b - a);
+    const suits = hand.cards.map(card => card.suit).sort();
+
+    const flush = suits.every(suit => suit === suits[0]);
+    const straight = (
+        ranks[3] === ranks[4] + 1
+        && ranks[2] === ranks[4] + 2
+        && ranks[1] === ranks[4] + 3
+        && ranks[0] === ranks[4] + 4
+    ) || (JSON.stringify(ranks) === "[12,3,2,1,0]");
+
+    const histogram = getRankHistogram(ranks);
+
+    if (straight && flush)
+        return [8, ranks[1]];
+    if (histogram[0][1] === 4)
+        return [7, ...histogram.map(([rank, _]) => rank)];
+    if (histogram[0][1] === 3 && histogram[1][1] === 2)
+        return [6, ...histogram.map(([rank, _]) => rank)];
+    if (flush)
+        return [5, ...ranks];
+    if (straight)
+        return [4, ranks[1]];
+    if (histogram[0][1] === 3)
+        return [3, ...histogram.map(([rank, _]) => rank)];
+    if (histogram[0][1] === 2 && histogram[1][1] === 2)
+        return [2, ...histogram.map(([rank, _]) => rank)];
+    if (histogram[0][1] === 2)
+        return [1, ...histogram.map(([rank, _]) => rank)];
+    return [0, ...ranks];
 };
 
-export const compareHands = (hand1: Hand, hand2: Hand): -1 | 0 | 1 => {
-    const score1 = evaluatePokerHand(hand1);
-    const score2 = evaluatePokerHand(hand2);
-    return score1 === score2 ? 0 : score1 > score2 ? 1 : -1;
+function getCombinations<T>(arr: T[], size: number): T[][] {
+    const result: T[][] = [];
+    const f = (prefix: T[], remaining: T[]) => {
+        if (prefix.length === size) {
+            result.push(prefix);
+            return;
+        }
+        for (let i = 0; i < remaining.length; i++) {
+            f([...prefix, remaining[i]], remaining.slice(i + 1));
+        }
+    };
+    f([], arr);
+    return result;
+}
+
+export const evaluateTableHand = (hand: Hand): number[] => {
+    const allCombinations = getCombinations(hand.cards, 5);
+    let bestHand: number[] = [-1];
+
+    for (const combination of allCombinations) {
+        const evaluation = evaluatePokerHand({ cards: combination });
+        if (evaluation > bestHand) {
+            bestHand = evaluation;
+        }
+    }
+
+    return bestHand;
+};
+
+export const compareHands = (playerHand: Hand, tableHand: Hand): -1 | 0 | 1 => {
+    // 1  - player wins
+    // 0  - tie
+    // -1 - table wins
+    const playerScore = evaluatePokerHand(playerHand);
+    const tableScore = evaluateTableHand(tableHand);
+
+    // Compare the two scores lexicographically
+    for (let i = 0; i < Math.min(playerScore.length, tableScore.length); i++) {
+        if (playerScore[i] > tableScore[i]) return 1;
+        if (playerScore[i] < tableScore[i]) return -1;
+    }
+
+    return 0;
 };
