@@ -1,7 +1,7 @@
 import './App.css';
 import { useState } from "react";
 import { createDeck, dealCards, shuffled } from "./utils/deckUtils";
-import { Card, CardComponent, Rank, Suit } from "./components/Card";
+import { Card, Rank, Suit } from "./components/Card";
 import { Board, BoardComponent } from "./components/Board";
 import { compareEval, evaluatePokerHand, extractBestHand } from "./utils/pokerUtils";
 import {DeckContentComponent} from './components/DeckContent';
@@ -151,11 +151,9 @@ function App() {
                         tableDeck={board.tableDeck}
                         playerHand={board.playerHand}
                         tableHand={board.tableHand}
-                        onPlayerDiscard={(gamePhase === 'discard' && board.playerDeck.cards.length > 0) ? onPlayerDiscard : null}
+                        onPlayerDiscard={(gamePhase === 'discard' && board.playerDeck.cards.length > 0) ? onPlayerDiscard : undefined}
+                        onDeckClick={toggleDeckPopup}
                     />
-                    <div className="deck-info" onClick={toggleDeckPopup}>
-                        <button>Show Deck</button>
-                    </div>
                     {gamePhase === 'discard' && (
                         <button onClick={revealRound}>Reveal</button>
                     )}
@@ -168,7 +166,6 @@ function App() {
                 </>
             )}
 
-            {/* Deck Pop-up */}
             {showDeckPopup && (
                 <DeckContentComponent cards={board.playerDeck.cards} onClose={toggleDeckPopup}/>
             )}

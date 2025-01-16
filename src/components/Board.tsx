@@ -14,7 +14,8 @@ export type BoardProps = {
     tableDeck: Deck;
     playerHand: Hand;
     tableHand: Hand;
-    onPlayerDiscard: ((index: number) => void) | null;
+    onPlayerDiscard?: (index: number) => void;
+    onDeckClick?: () => void;
 }
 
 export const BoardComponent: React.FC<BoardProps> = ({
@@ -23,6 +24,7 @@ export const BoardComponent: React.FC<BoardProps> = ({
     playerHand,
     tableHand,
     onPlayerDiscard,
+    onDeckClick,
 }) => {
     return (
         <div className="game-board">
@@ -34,7 +36,7 @@ export const BoardComponent: React.FC<BoardProps> = ({
             </div>
             <div className="decks">
                 <DeckComponent {...tableDeck} />
-                <DeckComponent {...playerDeck} />
+                <DeckComponent cards={playerDeck.cards} onClick={onDeckClick}/>
             </div>
         </div>
     );

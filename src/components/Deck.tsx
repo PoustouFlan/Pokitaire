@@ -5,7 +5,12 @@ export type Deck = {
     cards: Card[];
 };
 
-export const DeckComponent: React.FC<Deck> = ({ cards }) => {
+export type DeckProps = {
+    cards: Card[];
+    onClick?: () => void;
+}
+
+export const DeckComponent: React.FC<DeckProps> = ({ cards, onClick }) => {
     return (
         <div
             className="deck"
@@ -15,6 +20,7 @@ export const DeckComponent: React.FC<Deck> = ({ cards }) => {
                 width: '88px',
                 height: `${140 - (52 - cards.length) / 4}px`,
             }}
+            onClick={onClick}
         >
             <h1>{ cards.length } Card{ cards.length > 1 && "s"}</h1>
         </div>
