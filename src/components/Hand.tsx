@@ -8,14 +8,15 @@ export type Hand = {
 export type HandProps = {
     hand: Hand;
     onDiscard?: (index: number) => void;
+    hidden: number;
 }
 
-export const HandComponent: React.FC<HandProps> = ({ hand, onDiscard }) => {
+export const HandComponent: React.FC<HandProps> = ({ hand, onDiscard, hidden }) => {
     return (
         <div className="hand">
             {hand.cards.map((card, index) => (
                 <div key={index} className="card-container">
-                    <CardComponent suit={card.suit} value={card.value}/>
+                    <CardComponent card={{suit:card.suit, value:card.value}} hidden={index < hidden}/>
                     {onDiscard && <button onClick={() => onDiscard(index)}>Discard</button>}
                 </div>
             ))}

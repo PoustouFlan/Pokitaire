@@ -9,7 +9,7 @@ export const DeckComponent: React.FC<Deck> = ({ cards }) => {
     return (
         <div className="deck">
             {cards.map((card, index) => (
-                <CardComponent key={index} {...card} />
+                <CardComponent key={index} card={card} hidden={false}/>
             ))}
         </div>
     );

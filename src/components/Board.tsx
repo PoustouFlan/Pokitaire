@@ -32,9 +32,9 @@ export const BoardComponent: React.FC<BoardProps> = ({
 }) => {
     return (
         <div className="game-board">
-            <HandComponent hand={tableHand} />
+            <HandComponent hand={tableHand} hidden={gamePhase === 'play' ? 0 : 7} />
             <DeckComponent {...tableDeck} />
-            <HandComponent hand={playerHand} onDiscard={onPlayerDiscard} />
+            <HandComponent hand={playerHand} onDiscard={onPlayerDiscard} hidden={0}/>
             {gamePhase === 'discard' && (
                 <button onClick={playRound}>Play</button>
             )}
