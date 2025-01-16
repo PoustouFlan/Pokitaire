@@ -5,6 +5,7 @@ import { Card, CardComponent, Rank, Suit } from "./components/Card";
 import { Board, BoardComponent } from "./components/Board";
 import { compareEval, evaluatePokerHand, extractBestHand } from "./utils/pokerUtils";
 import {DeckContentComponent} from './components/DeckContent';
+import {Amogus} from './components/Amogus';
 
 function App() {
     const values: Rank[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -124,9 +125,6 @@ function App() {
         if (board.tableDeck.cards.length === 0) setGamePhase('win');
     }
 
-    function handleReplay() {
-        window.location.reload();
-    }
 
     function toggleDeckPopup() {
         setShowDeckPopup(prev => !prev); // Toggle the visibility of the deck pop-up
@@ -135,15 +133,15 @@ function App() {
     return (
         <>
             {gamePhase === 'win' && (
-                <div>
+                <div className="end-screen">
                     <h1>You Win! 🎉</h1>
-                    <button onClick={handleReplay}>Play Again!</button>
+                    <Amogus/>
                 </div>
             )}
             {gamePhase === 'lose' && (
-                <div>
+                <div className="end-screen">
                     <h1>You Lose! 😢</h1>
-                    <button onClick={handleReplay}>Play again!</button>
+                    <Amogus/>
                 </div>
             )}
             {gamePhase !== 'win' && gamePhase !== 'lose' && (
