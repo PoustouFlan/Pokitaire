@@ -111,8 +111,6 @@ export const compareEval = (eval1 : number[], eval2: number[]) : -1 | 0 | 1 => {
     // 1  - eval1 wins
     // 0  - tie
     // -1 - eval2 wins
-    console.log(eval1);
-    console.log(eval2);
 
     for (let i = 0; i < Math.min(eval1.length, eval2.length); i++) {
         if (eval1[i] > eval2[i]) return 1;

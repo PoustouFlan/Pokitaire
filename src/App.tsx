@@ -161,7 +161,7 @@ function App() {
                 tableHand: { cards: [] },
             };
             setTableKnown([...tableKnown, ...playerHand.cards, ...tableHand]);
-            setPlayerKnown(playerKnown.filter((card) => !playerHand.cards.includes(card)));
+            setPlayerKnown(playerKnown.filter(({value, suit}) => !playerHand.cards.find(({value:v2, suit:s2}) => v2 === value && s2 === suit)));
         }
         setBoard(newBoard);
         setGamePhase('play');

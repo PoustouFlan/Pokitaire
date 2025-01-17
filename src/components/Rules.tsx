@@ -17,7 +17,7 @@ export const Rules: React.FC = () => {
                     <li>As many time as you wish, you may discard one of the
                         cards in your hand and draw a new card to improve your
                         hand. Be careful, as discarded cards goes directly
-                        into the table's deck</li>
+                        into the table's deck.</li>
                     <li>When you feel comfortable with your hand, you can
                         then hit <b>reveal</b>.
                         The table will then chose 5 cards from its hand,
