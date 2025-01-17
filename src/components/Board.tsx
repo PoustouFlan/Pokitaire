@@ -36,7 +36,9 @@ export const BoardComponent: React.FC<BoardProps> = ({
             </div>
             <div className="decks">
                 <DeckComponent {...tableDeck} />
-                <DeckComponent cards={playerDeck.cards} onClick={onDeckClick}/>
+                <div className="in-hand">
+                    <DeckComponent cards={playerDeck.cards} onClick={onDeckClick}/>
+                </div>
             </div>
         </div>
     );

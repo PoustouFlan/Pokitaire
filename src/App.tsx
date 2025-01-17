@@ -4,8 +4,10 @@ import { createDeck, dealCards, shuffled } from "./utils/deckUtils";
 import { Card, Rank, Suit } from "./components/Card";
 import { Board, BoardComponent } from "./components/Board";
 import { compareEval, evaluatePokerHand, extractBestHand } from "./utils/pokerUtils";
-import {DeckContentComponent} from './components/DeckContent';
-import {Amogus} from './components/Amogus';
+import { DeckContentComponent } from './components/DeckContent';
+import { Amogus } from './components/Amogus';
+import { Rules } from './components/Rules';
+
 
 function App() {
     const values: Rank[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -152,7 +154,7 @@ function App() {
     }
 
     return (
-        <>
+        <div className="page">
             {gamePhase === 'win' && (
                 <div className="end-screen">
                     <h1>You Win! 🎉</h1>
@@ -167,6 +169,7 @@ function App() {
             )}
             {gamePhase !== 'win' && gamePhase !== 'lose' && (
                 <>
+                    <h1>Pokitaire</h1>
                     <BoardComponent
                         playerDeck={board.playerDeck}
                         tableDeck={board.tableDeck}
@@ -184,6 +187,7 @@ function App() {
                     {gamePhase === 'play' && (
                         <button onClick={startRound}>New Round</button>
                     )}
+                    <Rules/>
                 </>
             )}
 
@@ -194,7 +198,7 @@ function App() {
                     playerHand={board.playerHand.cards}
                     onClose={toggleDeckPopup}/>
             )}
-        </>
+        </div>
     );
 }
 

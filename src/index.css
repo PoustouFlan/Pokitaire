@@ -13,18 +13,30 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Global Styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Arial', sans-serif;
   background-color: #0b3d91;
   color: #fff;
-  display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  overflow: hidden;
 }
 
 
@@ -111,14 +123,17 @@ button:hover {
 }
 
 
-
 .game-board {
   display: flex;
+  overflow:auto;
   flex-direction: column;
   align-items: center;
   position: relative;
   width: 1000px;
-  height: 500px;
+  max-width: 100%;
+  height: 450px;
+  max-height: 90vh;
+  box-sizing: border-box;
 }
 
 .side {
@@ -326,3 +341,6 @@ button:hover {
   transition-delay: 300ms;
 }
 
+.rules {
+    text-align: left;
+}
