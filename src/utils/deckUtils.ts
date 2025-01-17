@@ -9,9 +9,7 @@ export const createDeck = (suits: Suit[], values: Rank[]): Deck => {
 };
 
 export const shuffled = (deck: Deck): Deck => {
-    const shuffled : Deck = { 
-        cards: deck.cards.map(({value, suit}) => ({value, suit, hidden:true}))
-    };
+    const shuffled : Deck = { cards: deck.cards };
     for (let i = shuffled.cards.length - 1; i > 0; i--)
     {
         const j = Math.floor(Math.random() * (i+1));

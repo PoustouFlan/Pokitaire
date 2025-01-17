@@ -2,14 +2,15 @@ import React from 'react';
 import { Card, CardComponent, Rank, Suit } from './Card.tsx';
 
 export type DeckContentProps = {
-    cards: Card[],
+    playerCards: Card[],
+    tableCards: Card[],
     onClose: () => void
 };
 
 
-export const DeckContentComponent: React.FC<DeckContentProps> = ({ cards, onClose }) => {
+export const DeckContentComponent: React.FC<DeckContentProps> = ({ playerCards, tableCards, onClose }) => {
     const values: Rank[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    const suits: Suit[] = ['hearts', 'diamonds', 'clubs', 'spades'];
+    const suits: Suit[] = ['clubs', 'diamonds', 'spades', 'hearts'];
 
     return (
         <div className="deck-popup">
@@ -18,16 +19,26 @@ export const DeckContentComponent: React.FC<DeckContentProps> = ({ cards, onClos
                 <div className="deck-grid">
                     {suits.map((suit) =>
                         values.map((value) => {
-                            const card = cards.find(c => c.suit === suit && c.value === value);
-                            return (
-                                <div key={`${suit}-${value}`} className="deck-card">
-                                    {card ? (
-                                        <CardComponent suit={card.suit} value={card.value} hidden={false}/>
-                                    ) : (
-                                        <div className="empty-card"></div>
-                                    )}
-                                </div>
-                            );
+                            const playerCard = playerCards.find((c: Card) => c.suit === suit && c.value === value && !c.hidden);
+                            if (playerCard)
+                                return (
+                                    <div key={`${suit}-${value}`} className="deck-card">
+                                        {(
+                                            <CardComponent suit={suit} value={value} hidden={false}/>
+                                        )}
+                                    </div>
+                                );
+                            const tableCard = tableCards.find((c: Card) => c.suit === suit && c.value === value && !c.hidden);
+                            if (tableCard)
+                                return (<div className="empty-card"></div>);
+                            else
+                                return (
+                                    <div key={`${suit}-${value}`} className="deck-card">
+                                        {(
+                                            <CardComponent suit={suit} value={value} hidden={true}/>
+                                        )}
+                                    </div>
+                                );
                         })
                     )}
                 </div>
