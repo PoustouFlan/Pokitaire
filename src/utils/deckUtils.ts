@@ -20,7 +20,7 @@ export const shuffled = (deck: Deck): Deck => {
 
 export const dealCards = (deck: Deck, hand: Hand, count: number, reveal: boolean = false): { deck: Deck, hand: Hand } => {
     const dealt : Card[] = deck.cards.slice(0, count).map(
-        ({suit, value, hidden}) => ({suit, value, hidden:hidden && !reveal})
+        ({suit, value}) => ({suit, value, hidden:!reveal})
     );
     return {
         deck: { cards: deck.cards.slice(count) },

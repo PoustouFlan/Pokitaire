@@ -169,7 +169,8 @@ function App() {
             {showDeckPopup && (
                 <DeckContentComponent
                     playerCards={board.playerDeck.cards}
-                    tableCards={board.tableDeck.cards.concat(board.playerHand.cards)}
+                    tableCards={board.tableDeck.cards}
+                    playerHand={board.playerHand.cards}
                     onClose={toggleDeckPopup}/>
             )}
         </>
