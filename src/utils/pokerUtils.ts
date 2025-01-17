@@ -93,8 +93,8 @@ function getCombinations<T>(arr: T[], size: number): T[][] {
 
 export const extractBestHand = (hand: Hand): Card[] => {
     const allCombinations = getCombinations(hand.cards, 5);
-    let bestHand: Card[] = [];
-    let bestEval: number[] = [-1];
+    let bestHand: Card[] = hand.cards.slice(0, 5);
+    let bestEval: number[] = evaluatePokerHand(bestHand);
 
     for (const combination of allCombinations) {
         const evaluation = evaluatePokerHand(combination);
@@ -111,9 +111,16 @@ export const compareEval = (eval1 : number[], eval2: number[]) : -1 | 0 | 1 => {
     // 1  - eval1 wins
     // 0  - tie
     // -1 - eval2 wins
+    console.log(eval1);
+    console.log(eval2);
+
     for (let i = 0; i < Math.min(eval1.length, eval2.length); i++) {
         if (eval1[i] > eval2[i]) return 1;
         if (eval1[i] < eval2[i]) return -1;
     }
+    if (eval1.length > eval2.length)
+        return 1;
+    if (eval1.length < eval2.length)
+        return -1;
     return 0;
 }

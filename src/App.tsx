@@ -21,9 +21,13 @@ function App() {
     });
     const [revealing, setRevealing] = useState(false);
     const [showDeckPopup, setShowDeckPopup] = useState(false); // New state for pop-up visibility
+    const [playerKnown, setPlayerKnown] = useState<Card[]>([]);
+    const [tableKnown, setTableKnown] = useState<Card[]>([]);
+    const [justDiscarded, setJustDiscarded] = useState<Card[]>([]);
 
     function onPlayerDiscard(index: number) {
-        if (board.playerDeck.cards.length === 0) return;
+        if (board.playerDeck.cards.length === 0)
+            return;
 
         const discarded = board.playerHand.cards[index];
         const picked: Card = {
@@ -42,14 +46,25 @@ function App() {
             tableDeck: { cards: board.tableDeck.cards.concat(discarded) }
         };
         setBoard(newBoard);
+        setPlayerKnown(playerKnown.filter(
+            ({suit, value}) => suit !== discarded.suit && value !== discarded.value
+        ));
+        setJustDiscarded(justDiscarded.concat(discarded));
+
+        if (newBoard.playerDeck.cards.length === 0)
+            setTableKnown(newBoard.tableDeck.cards.concat(newBoard.tableHand.cards));
+        else
+            setTableKnown(tableKnown.concat(discarded));
     }
 
     function startRound() {
         const { deck: playerDeck, hand: playerHand } = dealCards(shuffled(board.playerDeck), board.playerHand, 5, true);
         const { deck: tableDeck, hand: tableHand } = dealCards(shuffled(board.tableDeck), board.tableHand, 7);
-        const newBoard = { playerDeck, tableDeck, playerHand, tableHand };
-        setBoard(newBoard);
+        setBoard({ playerDeck, tableDeck, playerHand, tableHand });
         setGamePhase('discard'); // Set phase to discard after dealing cards
+        setTableKnown([...new Set(tableKnown)]);
+        setPlayerKnown([...new Set(playerKnown)]);
+        setJustDiscarded([]);
     }
 
     function revealRound() {
@@ -104,6 +119,8 @@ function App() {
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
+            setPlayerKnown([...playerKnown, ...tableHand, ...playerHand.cards]);
+            setTableKnown(justDiscarded);
         } else if (result === 0) {
             newBoard = {
                 playerDeck: { cards: [...board.playerDeck.cards, ...board.tableHand.cards] },
@@ -111,6 +128,8 @@ function App() {
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
+            setTableKnown(playerHand.cards);
+            setPlayerKnown(tableHand);
         } else {
             newBoard = {
                 ...board,
@@ -118,11 +137,13 @@ function App() {
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
+            setTableKnown([...tableKnown, ...playerHand.cards, ...tableHand]);
+            setPlayerKnown(playerKnown.filter((card) => !playerHand.cards.includes(card)));
         }
         setBoard(newBoard);
         setGamePhase('play');
-        if (board.playerDeck.cards.length === 0) setGamePhase('lose');
-        if (board.tableDeck.cards.length === 0) setGamePhase('win');
+        if (newBoard.playerDeck.cards.length === 0) setGamePhase('lose');
+        if (newBoard.tableDeck.cards.length === 0) setGamePhase('win');
     }
 
 
@@ -168,8 +189,8 @@ function App() {
 
             {showDeckPopup && (
                 <DeckContentComponent
-                    playerCards={board.playerDeck.cards}
-                    tableCards={board.tableDeck.cards}
+                    playerKnown={playerKnown}
+                    tableKnown={tableKnown}
                     playerHand={board.playerHand.cards}
                     onClose={toggleDeckPopup}/>
             )}

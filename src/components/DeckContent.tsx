@@ -2,14 +2,14 @@ import React from 'react';
 import { Card, CardComponent, Rank, Suit } from './Card.tsx';
 
 export type DeckContentProps = {
-    playerCards: Card[],
-    tableCards: Card[],
+    playerKnown: Card[],
+    tableKnown: Card[],
     playerHand: Card[],
     onClose: () => void
 };
 
 
-export const DeckContentComponent: React.FC<DeckContentProps> = ({ playerCards, tableCards, playerHand, onClose }) => {
+export const DeckContentComponent: React.FC<DeckContentProps> = ({ playerKnown, tableKnown, playerHand, onClose }) => {
     const values: Rank[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
     const suits: Suit[] = ['clubs', 'diamonds', 'spades', 'hearts'];
 
@@ -20,18 +20,6 @@ export const DeckContentComponent: React.FC<DeckContentProps> = ({ playerCards, 
                 <div className="deck-grid">
                     {suits.map((suit) =>
                         values.map((value) => {
-                            const playerCard = playerCards.find((c: Card) => c.suit === suit && c.value === value && !c.hidden);
-                            if (playerCard)
-                                return (
-                                    <div key={`${suit}-${value}`} className="deck-card">
-                                        {(
-                                            <CardComponent suit={suit} value={value} hidden={false}/>
-                                        )}
-                                    </div>
-                                );
-                            const tableCard = tableCards.find((c: Card) => c.suit === suit && c.value === value && !c.hidden);
-                            if (tableCard)
-                                return (<div className="empty-card"></div>);
                             const handCard = playerHand.find((c: Card) => c.suit === suit && c.value === value);
                             if (handCard)
                                 return (
@@ -41,6 +29,18 @@ export const DeckContentComponent: React.FC<DeckContentProps> = ({ playerCards, 
                                         )}
                                     </div>
                                 );
+                            const playerCard = playerKnown.find((c: Card) => c.suit === suit && c.value === value);
+                            if (playerCard)
+                                return (
+                                    <div key={`${suit}-${value}`} className="deck-card">
+                                        {(
+                                            <CardComponent suit={suit} value={value} hidden={false}/>
+                                        )}
+                                    </div>
+                                );
+                            const tableCard = tableKnown.find((c: Card) => c.suit === suit && c.value === value);
+                            if (tableCard)
+                                return (<div className="empty-card"></div>);
                             return (
                                 <div key={`${suit}-${value}`} className="deck-card">
                                     {(
