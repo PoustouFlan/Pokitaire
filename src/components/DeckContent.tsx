@@ -40,7 +40,7 @@ export const DeckContentComponent: React.FC<DeckContentProps> = ({ playerKnown, 
                                 );
                             const tableCard = tableKnown.find((c: Card) => c.suit === suit && c.value === value);
                             if (tableCard)
-                                return (<div className="empty-card"></div>);
+                                return (<div key={`${suit}-${value}`} className="empty-card"></div>);
                             return (
                                 <div key={`${suit}-${value}`} className="deck-card">
                                     {(
