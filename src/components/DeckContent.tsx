@@ -52,6 +52,14 @@ export const DeckContentComponent: React.FC<DeckContentProps> = ({ playerKnown, 
                     )}
                 </div>
                 <button onClick={onClose}>Close</button>
+                <div className="rules">
+                    <ul>
+                        <li>Cards you have in your hand are highlighted.</li>
+                        <li>Cards you that are in your deck are shown.</li>
+                        <li>Cards you that are in the table's deck are absent.</li>
+                        <li>Cards you have no sufficient information about are shown face down.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     );

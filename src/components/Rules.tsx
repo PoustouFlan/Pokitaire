@@ -30,10 +30,6 @@ export const Rules: React.FC = () => {
 
                 You may click on your deck to reveal what information you
                 have about the cards.
-                Cards you have in your hand are highlighted.
-                Cards you may know are in your deck are shown.
-                Cards you may know are in the table's deck are absent.
-                Cards you have no sufficient information about are shown face down.<br/>
 
                 First player to get all 52 cards in his deck wins.
                 Good luck!

@@ -113,7 +113,7 @@ button:hover {
 }
 
 .in-hand {
-    box-shadow: 2px 2px 10px red;
+    outline: 4px solid red;
     border-radius: 10px;
 }
 

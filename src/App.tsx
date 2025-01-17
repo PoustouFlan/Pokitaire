@@ -26,6 +26,7 @@ function App() {
     const [playerKnown, setPlayerKnown] = useState<Card[]>([]);
     const [tableKnown, setTableKnown] = useState<Card[]>([]);
     const [justDiscarded, setJustDiscarded] = useState<Card[]>([]);
+    const [revealAnim, setRevealAnim] = useState<any>(null);
 
     function onPlayerDiscard(index: number) {
         if (board.playerDeck.cards.length === 0)
@@ -86,7 +87,6 @@ function App() {
                             tableHand.cards[i].hidden = false;
                             setBoard({ ...board });
                             setRevealing(false);
-                            setGamePhase('revealing');
                         }, 500);
                         return;
                     }
@@ -100,12 +100,33 @@ function App() {
             if (!oneRevealed) {
                 clearInterval(revealInterval);
                 setRevealing(false);
+                setRevealAnim(null);
             }
         }, 200);
+        setRevealAnim(revealInterval);
         setGamePhase('revealing');
     }
 
     function playRound() {
+        if (revealing)
+        {
+            clearInterval(revealAnim);
+            setRevealAnim(null);
+
+            const tableHand = board.tableHand;
+            const playedCards = extractBestHand(tableHand);
+            for (let i = 0; i < tableHand.cards.length; i++) {
+                if (!tableHand.cards[i].hidden) continue;
+                if (playedCards.includes(tableHand.cards[i])) {
+                    tableHand.cards[i].hidden = false;
+                }
+            }
+            setBoard({ ...board });
+
+            setRevealing(false);
+            return;
+        }
+
         const playerHand = board.playerHand;
         const playerEval = evaluatePokerHand(playerHand.cards);
         const tableHand = extractBestHand(board.tableHand);
@@ -181,8 +202,11 @@ function App() {
                     {gamePhase === 'discard' && (
                         <button onClick={revealRound}>Reveal</button>
                     )}
-                    {gamePhase === 'revealing' && (
-                        <button onClick={playRound} disabled={revealing}>Resolve</button>
+                    {gamePhase === 'revealing' && !revealing && (
+                        <button onClick={playRound}>Resolve</button>
+                    )}
+                    {gamePhase === 'revealing' && revealing && (
+                        <button onClick={playRound}>Skip</button>
                     )}
                     {gamePhase === 'play' && (
                         <button onClick={startRound}>New Round</button>
