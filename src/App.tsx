@@ -7,6 +7,7 @@ import { compareEval, evaluatePokerHand, extractBestHand } from "./utils/pokerUt
 import { DeckContentComponent } from './components/DeckContent';
 import { Amogus } from './components/Amogus';
 import { Rules } from './components/Rules';
+import {Predictor} from './components/Predictor';
 
 
 function App() {
@@ -63,11 +64,28 @@ function App() {
         const { deck: tableDeck, hand: tableHand } = dealCards(shuffled(board.tableDeck), board.tableHand, 7);
         setBoard({ playerDeck, tableDeck, playerHand, tableHand });
         setGamePhase('discard'); // Set phase to discard after dealing cards
-        if (playerDeck.cards.length === 0)
+        const singlePlayerKnown = playerKnown.filter((value, index) => {
+          const _value = JSON.stringify(value);
+          // console.log(value, playerHand.cards);
+          return index === playerKnown.findIndex(obj => {
+            return JSON.stringify(obj) === _value;
+          }) && !playerHand.cards.some(({value:v1, suit:s1}) => v1 === value.value && s1 === value.suit);
+        });
+        const singleTableKnown = tableKnown.filter((value, index) => {
+          const _value = JSON.stringify(value);
+          return index === tableKnown.findIndex(obj => {
+            return JSON.stringify(obj) === _value;
+          });
+        });
+        if (singlePlayerKnown.length === playerDeck.cards.length)
             setTableKnown(tableDeck.cards.concat(tableHand.cards));
         else
-            setTableKnown([...new Set(tableKnown)]);
-        setPlayerKnown([...new Set(playerKnown)]);
+        {
+            console.log(singlePlayerKnown);
+            console.log(singlePlayerKnown.length, playerDeck.cards.length);
+            setTableKnown(singleTableKnown);
+        }
+        setPlayerKnown(singlePlayerKnown);
     }
 
     function revealRound() {
@@ -241,6 +259,9 @@ function App() {
                     )}
                     {gamePhase === 'play' && (
                         <button onClick={startRound}>New Round</button>
+                    )}
+                    {tableKnown.length === board.tableDeck.cards.length + board.tableHand.cards.length && (
+                        <Predictor tableKnown = { tableKnown } />
                     )}
                     <Rules/>
                 </>

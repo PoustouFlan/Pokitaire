@@ -91,6 +91,19 @@ function getCombinations<T>(arr: T[], size: number): T[][] {
     return result;
 }
 
+export const getRandomCombination = (cards: Card[], size: number): Card[] => {
+    if (cards.length < size)
+        return [];
+    const result: Card[] = [];
+    while (result.length < size)
+    {
+        const card = cards[Math.floor(Math.random() * cards.length)];
+        if (!result.includes(card))
+            result.push(card);
+    }
+    return result;
+}
+
 export const extractBestHand = (hand: Hand): Card[] => {
     const allCombinations = getCombinations(hand.cards, 5);
     let bestHand: Card[] = hand.cards.slice(0, 5);
