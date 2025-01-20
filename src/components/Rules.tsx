@@ -23,7 +23,7 @@ export const Rules: React.FC = () => {
                         The table will then chose 5 cards from its hand,
                         making the best Poker hand it can.</li>
                     <li>The player having the best Poker hand gets to take
-                        all of the opponent cards into his deck.</li>
+                        all of the opponent's visible cards into his deck.</li>
                     <li>In the event of a tie, both players gets to take
                         the opponent's cards into his deck.</li>
                 </ul>
