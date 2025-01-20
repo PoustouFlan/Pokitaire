@@ -49,7 +49,7 @@ function App() {
         };
         setBoard(newBoard);
         setPlayerKnown(playerKnown.filter(
-            ({suit, value}) => suit !== discarded.suit && value !== discarded.value
+            ({suit, value}) => suit !== discarded.suit || value !== discarded.value
         ));
 
         if (newBoard.playerDeck.cards.length === 0)
@@ -63,7 +63,10 @@ function App() {
         const { deck: tableDeck, hand: tableHand } = dealCards(shuffled(board.tableDeck), board.tableHand, 7);
         setBoard({ playerDeck, tableDeck, playerHand, tableHand });
         setGamePhase('discard'); // Set phase to discard after dealing cards
-        setTableKnown([...new Set(tableKnown)]);
+        if (playerDeck.cards.length === 0)
+            setTableKnown(tableDeck.cards.concat(tableHand.cards));
+        else
+            setTableKnown([...new Set(tableKnown)]);
         setPlayerKnown([...new Set(playerKnown)]);
     }
 
