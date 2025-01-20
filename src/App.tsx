@@ -25,7 +25,6 @@ function App() {
     const [showDeckPopup, setShowDeckPopup] = useState(false); // New state for pop-up visibility
     const [playerKnown, setPlayerKnown] = useState<Card[]>([]);
     const [tableKnown, setTableKnown] = useState<Card[]>([]);
-    const [justDiscarded, setJustDiscarded] = useState<Card[]>([]);
     const [revealAnim, setRevealAnim] = useState<any>(null);
 
     function onPlayerDiscard(index: number) {
@@ -52,7 +51,6 @@ function App() {
         setPlayerKnown(playerKnown.filter(
             ({suit, value}) => suit !== discarded.suit && value !== discarded.value
         ));
-        setJustDiscarded(justDiscarded.concat(discarded));
 
         if (newBoard.playerDeck.cards.length === 0)
             setTableKnown(newBoard.tableDeck.cards.concat(newBoard.tableHand.cards));
@@ -67,12 +65,12 @@ function App() {
         setGamePhase('discard'); // Set phase to discard after dealing cards
         setTableKnown([...new Set(tableKnown)]);
         setPlayerKnown([...new Set(playerKnown)]);
-        setJustDiscarded([]);
     }
 
     function revealRound() {
         const tableHand = board.tableHand;
         const playedCards = extractBestHand(tableHand);
+        const newTableKnown = tableKnown;
 
         setRevealing(true);
         let revealedCount = 0;
@@ -85,6 +83,8 @@ function App() {
                         clearInterval(revealInterval);
                         setTimeout(() => {
                             tableHand.cards[i].hidden = false;
+                            newTableKnown.push(tableHand.cards[i]);
+                            setTableKnown(newTableKnown);
                             setBoard({ ...board });
                             setRevealing(false);
                         }, 500);
@@ -92,6 +92,8 @@ function App() {
                     }
                     oneRevealed = true;
                     tableHand.cards[i].hidden = false;
+                    newTableKnown.push(tableHand.cards[i]);
+                    setTableKnown(newTableKnown);
                     revealedCount++;
                     break;
                 }
@@ -134,25 +136,47 @@ function App() {
 
         const result = compareEval(playerEval, tableEval);
 
-        let newBoard;
+        let newBoard: Board;
         if (result === 1) {
             newBoard = {
-                ...board,
-                playerDeck: { cards: [...board.playerDeck.cards, ...board.tableHand.cards, ...playerHand.cards] },
+                tableDeck: {cards: [...board.tableDeck.cards,
+                    ...board.tableHand.cards.filter(
+                    ({value, suit}) => !tableHand.find(
+                        ({value:v2, suit:s2}) => value === v2 && suit === s2
+                    ))
+                ]},
+                playerDeck: { cards: [...board.playerDeck.cards, ...tableHand, ...playerHand.cards] },
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
             setPlayerKnown([...playerKnown, ...tableHand, ...playerHand.cards]);
-            setTableKnown(justDiscarded);
+            setTableKnown(tableKnown.filter(
+                    ({value, suit}) => !tableHand.find(
+                        ({value:v2, suit:s2}) => value === v2 && suit === s2
+                    ))
+            );
         } else if (result === 0) {
             newBoard = {
-                playerDeck: { cards: [...board.playerDeck.cards, ...board.tableHand.cards] },
-                tableDeck: { cards: [...board.tableDeck.cards, ...playerHand.cards] },
+                playerDeck: { cards: [...board.playerDeck.cards, ...tableHand] },
+                tableDeck: { cards: [...board.tableDeck.cards, ...playerHand.cards,
+                    ...board.tableHand.cards.filter(
+                    ({value, suit}) => !tableHand.find(
+                        ({value:v2, suit:s2}) => value === v2 && suit === s2
+                    ))
+                ]},
                 playerHand: { cards: [] },
                 tableHand: { cards: [] },
             };
-            setTableKnown(playerHand.cards);
-            setPlayerKnown(tableHand);
+            setTableKnown([...playerHand.cards, ...tableKnown.filter(
+                    ({value, suit}) => !tableHand.find(
+                        ({value:v2, suit:s2}) => value === v2 && suit === s2
+                    ))
+            ]);
+            setPlayerKnown([...tableHand, ...playerKnown.filter(
+                    ({value, suit}) => !playerHand.cards.find(
+                        ({value:v2, suit:s2}) => v2 === value && s2 === suit
+                    ))
+            ]);
         } else {
             newBoard = {
                 ...board,
@@ -161,7 +185,11 @@ function App() {
                 tableHand: { cards: [] },
             };
             setTableKnown([...tableKnown, ...playerHand.cards, ...tableHand]);
-            setPlayerKnown(playerKnown.filter(({value, suit}) => !playerHand.cards.find(({value:v2, suit:s2}) => v2 === value && s2 === suit)));
+            setPlayerKnown(playerKnown.filter(
+                    ({value, suit}) => !playerHand.cards.find(
+                        ({value:v2, suit:s2}) => v2 === value && s2 === suit
+                    ))
+            );
         }
         setBoard(newBoard);
         setGamePhase('play');
